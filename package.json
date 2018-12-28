@@ -1,0 +1,31 @@
+{
+  "name": "@nsilly/notification",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "./node_modules/.bin/jest --forceExit",
+    "build": "./node_modules/.bin/rimraf dist && ./node_modules/.bin/babel src --out-dir dist/ --ignore \"node_modules\" --copy-files",
+    "publish_module": "npm run build && npx @codersvn/npm-auto-version && npm publish --access public && rm -rf dist",
+    "publish_module_only": "npm run build && npm publish --access public && rm -rf dist"
+  },
+  "author": "ChungND <nguyenchung26011992@gmail.com>",
+  "devDependencies": {
+    "@babel/cli": "^7.2.0",
+    "@babel/core": "^7.2.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.2.0",
+    "@babel/plugin-transform-runtime": "^7.2.0",
+    "@babel/preset-env": "^7.2.0",
+    "babel-eslint": "^8.2.2",
+    "babel-jest": "^22.4.1",
+    "babel-plugin-transform-builtin-extend": "^1.1.2",
+    "rimraf": "^2.6.2"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.2.0",
+    "@nsilly/container": "*",
+    "@nsilly/support": "*",
+    "aws-sdk": "^2.230.1",
+    "lodash": "^4.17.4"
+  }
+}
