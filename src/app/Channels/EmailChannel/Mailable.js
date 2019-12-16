@@ -2,10 +2,13 @@ import nodemailer from 'nodemailer';
 import Style from './Style';
 import * as _ from 'lodash';
 import { Exception } from '@nsilly/exceptions';
+import { MailableConstract } from './MailableConstract';
 
-export default class CustomEmail {
+export default class Mailable extends MailableConstract {
   constructor() {
+    super();
     this.content = '';
+    this._greeting = undefined;
     this.customGreetingStyle = null;
     this.customSubjectStyle = null;
     this.from = process.env.DEFAULT_SENDER_EMAIL;
@@ -32,13 +35,13 @@ export default class CustomEmail {
 
   subject(subject = '', customStyle = null) {
     this.customSubjectStyle = customStyle;
-    this.subject = process.env.PREFIX_SUBJECT + ' ' + subject;
+    this.subject = subject;
     return this;
   }
 
-  greeting(greeting = '', customStyle = null) {
+  greeting(msg = '', customStyle = null) {
     this.customGreetingStyle = customStyle;
-    this.greeting = greeting;
+    this._greeting = msg;
     return this;
   }
 
@@ -63,12 +66,13 @@ export default class CustomEmail {
 
   buildContent() {
     let html = `<html><body style="${Style.body}">`;
-    html += `<p><img style="margin: 30px 0;" src="https://admin-dev.reflaunt.com/assets/images/logo.png"></p>`;
     html += `<div style="${Style.box}">`;
     html += _.isNil(this.customSubjectStyle) ? `<h1 style="${Style.subject}">${this.subject}</h1>` : `<h1 style="${Style.subject} ${this.customSubjectStyle}">${this.subject}</h1>`;
-    html += _.isNil(this.customGreetingStyle)
-      ? `<div style="${Style.greeting}">${this.greeting}</div>`
-      : `<div style="${Style.greeting} ${this.customGreetingStyle}">${this.greeting}</div>`;
+    if (this._greeting !== undefined && this._greeting !== '') {
+      html += _.isNil(this.customGreetingStyle)
+        ? `<div style="${Style.greeting}">${this._greeting}</div>`
+        : `<div style="${Style.greeting} ${this.customGreetingStyle}">${this._greeting}</div>`;
+    }
     html += `<div style="${Style.content}">${this.content}</div>`;
     html += '</div></body></html>';
     return html;
@@ -85,11 +89,22 @@ export default class CustomEmail {
       }
     });
 
-    return transporter.sendMail({
-      from: this.from,
-      to: this.to,
-      subject: this.subject,
-      html: this.buildContent()
+    return new Promise((resolve, reject) => {
+      transporter.sendMail(
+        {
+          from: this.from,
+          to: this.to,
+          subject: this.subject,
+          html: this.buildContent()
+        },
+        function(err, info) {
+          if (!err) {
+            resolve({ sent: true, payload: info });
+          } else {
+            reject(err);
+          }
+        }
+      );
     });
   }
 }

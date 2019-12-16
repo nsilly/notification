@@ -19,7 +19,8 @@ export default {
         margin-top: 40px;
     `,
   greeting: `
-        color: green;
+    font-size: 18px;
+    font-weight: bold;
     `,
   paragraph: `
         font-size: 14px;

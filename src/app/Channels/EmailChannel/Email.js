@@ -1,10 +1,12 @@
+import nodemailer from 'nodemailer';
 import Style from './Style';
 import _ from 'lodash';
 import { Exception } from '@nsilly/exceptions';
-const nodemailer = require('nodemailer');
+import { MailableConstract } from './MailableConstract';
 
-export default class Email {
+export class SimpleEmail extends MailableConstract {
   constructor() {
+    super();
     this.from = process.env.EMAIL_FROM;
     this.from_name = process.env.EMAIL_FROM_NAME;
     this.content = '';

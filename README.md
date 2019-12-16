@@ -1,70 +1,88 @@
+# Nsilly Notification
+
 - [Nsilly Notification](#nsilly-notification)
-  - [Install](#install)
-  - [How to use](#how-to-use)
+  - [Installation](#installation)
     - [Import provider](#import-provider)
-    - [Update models/user](#update-modelsuser)
+    - [Update User model](#update-user-model)
+  - [How to use](#how-to-use)
     - [Register Notification](#register-notification)
     - [Call Notification](#call-notification)
 
-# Nsilly Notification
 
-## Install
+## Installation
 
-Download package form npm
+Install package from NPM
 
-```
-yarn add @nsilly/notification
-```
-
-or
 
 ```
 npm install @nsilly/notification
 ```
 
-## How to use
+or
+
+```
+yarn add @nsilly/notification
+```
+
 
 ### Import provider
-Import module at config/app.js
+
+Import module in `config/app.js`
 
 ```javascript
 import { NotificationServiceProvider } from '@nsilly/notification';
 
 export default {
-  providers: [AppServiceProvider, NotificationServiceProvider]
+  providers: [ 
+    // ... Other Providers
+    NotificationServiceProvider
+  ]
 };
 ```
 
-### Update models/user
+### Update User model
 
-To use notification you must register devices for user. To do this we add setter, notify method to models/user.js file
+Notifications may be sent in two ways: 
+- Using the notify method of the Notifiable instance
+- Using the Notification facade. 
+  
+First, let's explore using the Notifiable instance:
+
+To do this we have to add extra function to `app/Models/User.js`
 
 ```javascript
+
+import { SNS } from '@nsilly/notification';
+
 export default (sequelize, DataTypes) => {
-  const User = sequelize.define(
-    'user',
-    {
-      email: DataTypes.STRING,
-      password: DataTypes.STRING
-    },
-    {
-      underscored: true
-    }
-  );
+  // ... Model defination
+  // Register Model property
 
-  User.prototype.setter = function setter(key, value) {
-    this[key] = value;
-  };
-
-  User.prototype.notify = function notify(notification) {
-    const _this = this;
-    notification.setNotifiable(_this);
-    notification.execute();
+  User.prototype.notify = function(notification) {
+    return new Promise((resolve) => {
+      const _this = this;
+      const methods = notification.via();
+      if (Array.isArray(methods) && methods.includes(SNS)) {
+        _this.getDevices().then(devices => {
+          _this.devices = devices;
+          notification.setNotifiable(_this);
+          notification.execute();
+          resolve(true);
+        });
+      } else {
+        notification.setNotifiable(_this);
+        notification.execute();
+        resolve(true);
+      }
+      
+    })
   };
 
   return User;
 };
 ```
+
+## How to use
 
 ### Register Notification
 ```javascript
