@@ -32,9 +32,7 @@
     "@nsilly/container": "*",
     "@nsilly/exceptions": "*",
     "@nsilly/support": "*",
-    "aws-sdk": "^2.230.1",
     "lodash": "*",
-    "mandrill-api": "^1.0.45",
     "nodemailer": "^6.4.2"
   }
 }
