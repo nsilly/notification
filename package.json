@@ -1,6 +1,6 @@
 {
   "name": "@nsilly/notification",
-  "version": "2.0.0",
+  "version": "2.0.3",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -29,9 +29,6 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.2.0",
-    "@nsilly/container": "*",
-    "@nsilly/exceptions": "*",
-    "@nsilly/support": "*",
     "lodash": "*",
     "nodemailer": "^6.4.2"
   }

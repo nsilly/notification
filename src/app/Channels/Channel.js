@@ -1,6 +1,6 @@
 import { Exception } from '@nsilly/exceptions';
 
-export class Channel {
+export default class Channel {
   constructor() {
     this.name = undefined;
   }
